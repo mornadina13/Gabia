@@ -22,8 +22,8 @@ Project Organized by Executive Director Ryan
 - Dynamic Resilience Definition
 - Resilience for IDC
 
-<br>
-![Business_Card_Eng]()
-![Business_Card_Kor]()
+### 5. Proof.
+![Business_Card_Eng](https://github.com/mornadina13/Gabia/blob/main/Img/Eng.jpeg)
+![Business_Card_Kor](https://github.com/mornadina13/Gabia/blob/main/Img/Kor.jpeg)
 ![certificates](https://github.com/mornadina13/Gabia/blob/main/Img/Certificates.jpeg)
 
