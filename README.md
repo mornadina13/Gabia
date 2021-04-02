@@ -23,5 +23,6 @@ Project Organized by Executive Director Ryan
 - Resilience for IDC
 
 <br>
-![alt certificate](./Img/Certificates.jpeg)
-https://github.com/mornadina13/Gabia/blob/main/Img/Certificates.jpeg)
+
+![certificates](https://github.com/mornadina13/Gabia/blob/main/Img/Certificates.jpeg)
+
