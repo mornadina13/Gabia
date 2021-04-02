@@ -20,7 +20,7 @@ January 18, 2021 - March 31, 2021
 Organized by Executive Director Ryan
 - Resilience Definition
 - Dynamic Resilience Definition
-- Resilience for IDC
+- Resilience for IDC<br>
 https://github.com/mornadina13/Gabia/blob/main/Resilience%20Project/Resilience_book.pdf
 <br>
 
