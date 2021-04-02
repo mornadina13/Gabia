@@ -7,6 +7,9 @@
 3. Date : January 18, 2021 - March 31, 2021
 <br>
 4. Specific
-d
+<br>
+- Running Legacy System(Cisco, Juniper, HP, DELL, etc) 
+<br>Managing OS&APM Version
+<br>-Client Support 
 
 
