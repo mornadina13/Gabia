@@ -9,7 +9,7 @@ Manager
 January 18, 2021 - March 31, 2021
 <br>
 ### 4. Specific
-(1) Running Legacy System(Cisco, Juniper, HP, DELL, etc).
+> (1) Running Legacy System(Cisco, Juniper, HP, DELL, etc).
 > <br>- Managing OS&APM Version
 <br>(2) Client Support .
 > <br>- VOC Feedback
