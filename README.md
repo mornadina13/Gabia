@@ -23,5 +23,5 @@ Project Organized by Executive Director Ryan
 - Resilience for IDC
 
 <br>
-![alt certificate](/img/certificate.jpg)
+![alt certificate](/Img/Certificates.jpeg)
 
