@@ -22,4 +22,6 @@ Project Organized by Executive Director Ryan
 - Dynamic Resilience Definition
 - Resilience for IDC
 
+<br>
+![alt certificate](/img/certificate.jpg)
 
