@@ -15,7 +15,7 @@ January 18, 2021 - March 31, 2021
 - VOC Feedback
 #### (3) Technical Support.
 - Monitoring(Seocho IDC, Gasan IDC)
-<br>- Failover&Trouble shooting
+- Failover&Trouble shooting
 #### (4) Resilience Project.
 Project Organized by Executive Director Ryan
 <br>- Resilience Definition
