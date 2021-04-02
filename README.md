@@ -11,10 +11,8 @@ January 18, 2021 - March 31, 2021
 ### 4. Specific
 #### (1) Running Legacy System(Cisco, Juniper, HP, DELL, etc).
 - Managing OS&APM Version
-<br>
 #### (2) Client Support.
 - VOC Feedback
-<br>
 #### (3) Technical Support.
 - Monitoring(Seocho IDC, Gasan IDC)
 <br>- Failover&Trouble shooting
