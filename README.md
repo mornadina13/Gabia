@@ -21,8 +21,8 @@ Organized by Executive Director Ryan
 - Resilience Definition
 - Dynamic Resilience Definition
 - Resilience for IDC
-<br>
 https://github.com/mornadina13/Gabia/blob/main/Resilience%20Project/Resilience_book.pdf
+<br>
 
 ### 5. Proof.
 <img src="https://github.com/mornadina13/Gabia/blob/main/Img/Eng.jpeg" witdh="500" height="200" /><img src="https://github.com/mornadina13/Gabia/blob/main/Img/Kor.jpeg" witdh="500" height="200" />
