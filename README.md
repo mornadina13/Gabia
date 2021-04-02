@@ -3,13 +3,13 @@
 ### 1. Company : Gabia co.,Ltd.
 <br>Security IDC Operating Division, Managed Service Unit
 <br>
-2. Title
+### 2. Title
 <br>Manager
 <br>
-3. Date
+### 3. Date
 <br>January 18, 2021 - March 31, 2021
 <br>
-4. Specific
+### 4. Specific
 <br>
 (1) Running Legacy System(Cisco, Juniper, HP, DELL, etc).
 <br>- Managing OS&APM Version
