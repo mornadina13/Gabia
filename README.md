@@ -23,5 +23,4 @@ Project Organized by Executive Director Ryan
 - Resilience for IDC
 
 ### 5. Proof.
-![Business_Card_Eng](https://github.com/mornadina13/Gabia/blob/main/Img/Eng.jpeg){: width="50%" height="50%"}
-![Business_Card_Kor](https://github.com/mornadina13/Gabia/blob/main/Img/Kor.jpeg){: width="50%" height="50%"}
+<img src="https://github.com/mornadina13/Gabia/blob/main/Img/Eng.jpeg", witdh="50" height="50">
