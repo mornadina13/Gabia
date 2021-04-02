@@ -25,5 +25,3 @@ Project Organized by Executive Director Ryan
 ### 5. Proof.
 ![Business_Card_Eng](https://github.com/mornadina13/Gabia/blob/main/Img/Eng.jpeg)
 ![Business_Card_Kor](https://github.com/mornadina13/Gabia/blob/main/Img/Kor.jpeg)
-![certificates](https://github.com/mornadina13/Gabia/blob/main/Img/Certificates.jpeg)
-
