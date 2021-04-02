@@ -1,0 +1,494 @@
+1. Apache Source 구성
+
+1) 기존 설치된 Apache 제거 ( 기존에 설치된게 없다면 Skip )
+yum remove -y httpd httpd-*
+
+
+
+2) Apache 빌드 환경 설정
+yum install -y make gcc g++ gcc-c++ autoconf automake libtool pkgconfig findutils oepnssl openssl-devel openldap-devel pcre-devel libxml2-devel lua-devel curl curl-devel libcurl-devel flex
+
+wget https://downloads.mysql.com/archives/get/file/mysql-5.7.30.tar.gz
+
+3) Apache 관련 모듈 다운로드 및 설치
+(1) Apr 다운로드
+cd /usr/local/src
+wget http://mirror.apache-kr.org/apr/apr-1.6.5.tar.gz
+tar xzvf apr-1.6.5.tar.gz
+cd apr-1.6.5
+./configure --prefix=/usr/local/apr
+make -j 4
+make install -j 4
+
+(2) apr-util 다운로드
+cd /usr/local/src
+wget http://mirror.apache-kr.org/apr/apr-util-1.6.1.tar.gz
+tar xzvf apr-util-1.6.1.tar.gz
+cd apr-util-1.6.1
+./configure --with-apr=/usr/local/apr/
+make -j 4
+make install -j 4
+
+(3) pcre 다운로드
+cd /usr/local/src
+wget http://downloads.sourceforge.net/project/pcre/pcre/8.44/pcre-8.44.tar.gz
+tar xzvf pcre-8.44.tar.gz
+cd pcre-8.44
+./configure --prefix=/usr/local/pcre
+make -j 4
+make install -j 4
+
+
+
+4) apache 다운로드 및 설치
+cd /usr/local/src
+wget http://mirror.apache-kr.org/httpd/httpd-2.4.46.tar.gz
+tar xzvf httpd-2.4.46.tar.gz
+mv apr-1.6.5 httpd-2.4.46/srclib/apr/
+mv apr-util-1.6.1 httpd-2.4.46/srclib/apr-util/
+cd httpd-2.4.46
+
+./configure --enable-module=so --enable-mods-shared=most --enable-maintainer-mode --enable-deflate --enable-headers --enable-rewrite --enable-ssl --enable-proxy --enable-proxy-http --enable-proxy-ajp --enable-proxy-balance --with-pcre=/usr/local/pcre --prefix=/usr/local/apache
+
+
+make -j 4
+make install -j 4
+
+
+5) apache 서비스 등록 및 실행
+cp /usr/local/apache/bin/apachectl /etc/init.d/httpd
+vi /etc/init.d/httpd
+# !/bin/sh
+# chkconfig: 2345 90 90
+# description: init file for Apache server daemon
+# processname: /usr/local/apache/bin/apachectl
+# config: /usr/local/apache/conf/httpd.conf
+# pidfile: /usr/local/apache/logs/httpd.pid
+
+6) httpd.conf 수정
+vi /usr/local/apache/conf/httpd.conf
+ServerName localhost  
+★
+
+
+7) httpd 서비스 시작 및 실행 확인
+service httpd start
+ps -ef | grep httpd
+
+※ 에러나면 httpd 전부 다 죽인 후에 다시 하면 됨.
+
+web에서 localhost 혹은 해당 IP 입력.
+-> 제공받은 1분 서버 IP : 103.60.126.188
+l*Pisr0rrccBF[MYj
+
+8) httpd 서비스 자동 실행 등록
+chkconfig httpd on
+chkconfig | grep httpd
+
+
+
+2. MySQL Source 구성	`
+
+1) 기존에 설치된 MySQL, cmake 삭제
+yum remove -y mysql* cmake
+
+2) MySQL 빌드 환경 설정
+yum install -y zlib zlib-devel cpp perl bison freetype freetype-devel freetype-utils ncurses-devel libtermcap-devel bzip2-devel
+
+3) cmake 다운로드 및 설치
+cd /usr/local/src
+wget https://cmake.org/files/v3.19/cmake-3.19.4.tar.gz
+tar xzvf cmake-3.19.4.tar.gz
+cd cmake-3.19.4
+./bootstrap
+make -j 4
+make install -j 4
+
+
+
+4) MySQL 그룹 및 계정 만들기
+groupadd mysql
+useradd -g mysql mysql
+
+5) MySQL 다운로드 및 컴파일
+cd /usr/local/src
+wget http://dev.mysql.com/Downloads/MySQL-5.7/mysql-5.7.32.tar.gz
+tar xzvf mysql-5.7.32.tar.gz
+cd mysql-5.7.32
+
+
+
+cmake \
+-DCMAKE_INSTALL_PREFIX=/usr/local/mysql \
+-DMYSQL_DATADIR=/usr/local/mysql/data \
+-DENABLED_LOCAL_INFILE=1 \
+-DWITH_INNOBASE_STORAGE_ENGINE=1 \
+-DMYSQL_UNIX_ADDR=/tmp/mysql.sock \
+-DSYSCONFDIR=/etc \
+-DDEFAULT_CHARSET=utf8 \
+-DMYSQL_TCP_PORT=3306 \
+-DWITH_EXTRA_CHARSETS=all \
+-DDEFAULT_COLLATION=utf8_general_ci \
+-DDOWNLOAD_BOOST=1 \
+-DWITH_BOOST=/usr/local/src/boost_1_59_0
+
+
+make -j 4
+make install -j 4
+
+
+※ cmake 했을때 해당 에러가 나왔을때의 해결 방법
+-- Configuring incomplete, errors occurred!
+See also "/usr/local/src/mysql-5.7.32/CMakeFiles/CMakeOutput.log".
+See also "/usr/local/src/mysql-5.7.32/CMakeFiles/CMakeError.log".
+
+방법 1 : yum install ncurses-devel
+
+방법 2 : cmake 소스 설치
+wget https://cmake.org/files/v3.19/cmake-3.19.4.tar.gz
+tar xzvf cmake-3.19.4.tar.gz
+cd cmake-3.19.4
+./bootstrap
+make -j 4
+make install -j 4
+
+
+
+
+6) MySQL 그룹 및 게정 권한 설정
+chown -R mysql:mysql /usr/local/mysql
+chown -R mysql:mysql /usr/local/mysql/data
+
+
+
+
+7) DB 생성
+cd /usr/local/mysql
+./scripts/bin/mysql_install_db --user=mysql --datadir=/usr/local/mysql/data
+./bin/mysql_install_db --user=mysql --datadir=/usr/local/mysql/data
+
+./bin/mysql_install_db --user=mysql --datadir=/usr/local/mysql/data
+
+
+
+8) MySQL 설정 파일 및 데몬 복사 ( base, datadir 지정 ) 
+cp support-files/my-default.cnf /etc/my.cnf
+cp support-files/mysql.server /etc/init.d/mysqld
+chmod 755 /etc/init.d/mysqld
+
+vi /etc/init.d/mysqld
+# basedir = /usr/local/mysql
+# datadir = /usr/local/mysql/data
+
+
+9) 환경변수 등록 및 MySQL 데몬 실행
+cd ~
+vi .bash_profile
+
+#PATH 부분에 아래 내용 추가.
+PATH=$PATH:$HOME/bin:/usr/local/mysql/bin
+
+source .bash_profile
+service mysqld start
+
+
+
+10) MySQL 계정 비밀번호 변경, 확인
+#mysqladmin -u root password 암호
+mysqladmin -u root password root123
+
+암호 설정 후 root 유저로 접속 테스트
+mysql -uroot -p
+
+
+
+11) MySQL 자동 실행 등록
+chkconfig --add mysqld
+chkconfig mysqld on
+chkconfig --list mysqld  
+
+
+
+
+3. PHP 구성
+
+1) PHP 빌드 환경 설정
+
+yum install -y libjpeg libjpeg-devel libjpeg-turbo-devel gd gd-devel gdbm-devel php-mbstring libexif-devel libmcrypt libmcrypt-devel libvpx libvpx-devel libXpm libXpm-devel icu libicu libicu-devel t1lib t1lib-devel gmp-devel mhash* gettext gettext-devel libtidy libtidy-devel libxslt libxslt-devel libedit-devel libc-client libc-client-devel pam-devel readline-devel libpng libpng-devel krb5-devel db4-devel expat*  
+
+
+
+2) libmcrypt & libmcrypt-devel 패키지 설치
+
+cd /usr/local/src
+wget http://elders.princeton.edu/data/puias/unsupported/6/x86_64/libmcrypt-devel-2.5.8-9.puias6.x86_64.rpm
+wget http://elders.princeton.edu/data/puias/unsupported/6/x86_64/libmcrypt-2.5.8-9.puias6.x86_64.rpm
+wget http://elders.princeton.edu/data/puias/unsupported/6/x86_64/libmcrypt-devel-2.5.8-9.puias6.x86_64.rpm
+
+rpm -ivh libmcrypt-2.5.8-9.puias6.x86_64.rpm
+rpm -ivh libmcrypt-devel-2.5.8-9.puias6.x86_64.rpm
+
+
+
+3) MySQL 라이브러리 참조
+cd /usr/local/mysql
+ln -s lib lib64
+
+
+
+4) PHP 다운로드 및 컴파일
+cd /usr/local/src
+wget http://kr1.php.net/get/php-7.3.26.tar.gz/from/this/mirror
+tar xzvf mirror
+cd php-7.3.26
+
+./configure --prefix=/usr/local/php --with-apxs2=/usr/local/apache/bin/apxs --with-mysql=/usr/local/mysql --with-config-file-path=/usr/local/apache/conf --with-language=korean --with-charset=euc_kr --enable-track-vars --enable-safe-mode --enable-magic-quotes --enable-debugger --enable-ftp --enable-sockets --enable-memory-limit=yes --with-zlib-dir=/usr --with-zlib --with-png-dir --with-jpeg-dir --disable-debug --with-libxml-dir=/usr/lib64 --with-curl --enable-mbstring --enable-exif --with-gd --with-iconv --with-freetype --with-freetype-dir=/usr --with-openssl --with-mcrypt --enable-soap --with-mysqli --with-pdo-mysql=mysqlnd
+
+make -j 4
+make install -j 4
+
+
+
+5) PHP 환경 설정
+cp php.ini-production /usr/local/apache/php.ini
+vi /usr/local/apache/php.ini
+# [Date] 아래에 아래 내용 추가
+date.timezone = "Asia/Seoul"
+
+
+
+6) Apache 환경 설정
+vi /usr/local/apache/conf/httpd.conf
+
+# httpd.conf 내에서 PHP모듈이 정상적으로 추가되어있는지 확인 (자동으로 연동되어 등록됨)
+LoadModule php5_module modules/libphp5.so
+
+#<IfModule dir_module>을 찾아 아래 내용 추가
+<IfModule dir_module>
+     DirectoryIndex index.html index.htm index.php index.cgi
+</IfModule>
+
+#<IfModule mime_module> 을 찾아 아래 내용 추가
+<IfModule mime_module>
+     AddType application/x-compress . z
+     AddType application/x-gzip . gz . tgz
+     AddType application/x-httpd-php .php .php3 .php4 .php5 .phtml .html .htm .inc
+     AddType application/x-httpd-source .phps
+</IfModule>
+
+#httpd.conf 저장한 뒤
+/etc/init.d/httpd restart
+
+
+
+7) 환경 변수 등록
+cd ~
+vi .bash_profile
+
+#PATH 부분에 아래 내용 추가
+
+PATH=$PATH:$HOME/bin:/usr/local/mysql/bin:/usr/local/php/bin
+
+# .bash_profile 저장한 뒤
+source .bash_profile
+
+
+
+8) test.php 작성
+vi /usr/local/apache/htdocs/test.php
+
+---------------------------------phpinfo.php--------------------------------------------
+<? php
+
+$db_con = mysqli_connect("localhost", "root", "1234");
+
+if($db_con) {
+	echo "DB 연결 성공 <p>";
+}
+else {
+	echo "DB 연결 실패 <p>";
+}
+
+$db_sec = mysqli_select_db($db_con, "test"); 	// test 자리에는 확인하고자 하는 databases 입력하면 됨
+
+if($db_sec) {
+	echo "DB select OK <p>";
+}
+else {
+	echo "DB select NO <p>";
+}
+
+?>
+
+------------------------------------------------------------------------------------------
+
+
+
+9) index.html 수정
+
+vi /usr/local/apache/htdocs/index.html
+
+---------------------------------index.html------------------------------------------------
+
+<!DOCTYPE html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8/">
+	<title>MySQL-PHP 연결 테스트 </title>
+</head>
+
+<body>
+
+<?php
+echo "MySQL 연결 테스트 <br>";
+
+$db = mysqli_connect("localhost", "root", "1234", "test");
+
+if($db){
+	echo "connect : 성공<br>";
+else{
+	echo "disconnect : 실패 <br>";
+}
+?>
+
+</body>
+</html>
+
+------------------------------------------------------------------------------------------
+
+
+
+
+4. Apache, MySQL 서버 각각 구성
+
+1) MySQL 서버
+yum install nfs-utils nfs-utils-lib
+vi /etc/exports
+#/usr/local/mysql 허용 IP(rw,sync)
+-> 지급받은 1분 서버의 경우 :
+/nfs/data 103.60.126.*(rw,sync)
+
+
+
+2) Apache 서버
+mount -t nfs 103.60.126.188:/usr/local/mysql /usr/local/mysql
+
+#부팅 시 자동 마운트
+vi /etc/fstab
+# 서버 IP:/usr/local/mysql    /usr/local/mysql    nfs     hard    0 0
+-> 지급받은 1분 서버의 경우 : 
+103.60.126.188:/usr/local/mysql /usr/local/mysql nfs hard 0 0
+
+
+
+3) 연동 확인
+웹에서 
+103.60.126.188
+or
+103.60.126.188/index.html
+or
+103.60.126.188/test.php
+
+alter user 'root'@'localhost' identified with mysql_native_password by 'pw123';
+UPDATE mysql.user SET authentication_string=PASSWORD('1234') WHERE User='root' AND Host='localhost';
+※ MySQL 패스워드 에러날때 해결법
+service mysqld stop
+mysqld_safe --skip-grant-tables &
+한 다음에 로그인
+mysql -uroot -p
+하고 패스워드 입력일때 그냥 ENTER
+
+update user set authentication_string=PASSWORD("1234"), password_expired='N', plugin='mysql_native_password' where User='root';
+
+로그인 되면 패스워드 변경
+alter user 'root'@'localhost' identified with mysql_native_password by '바꾸려는 비밀번호';
+한 후에 아래 명령어로 전체 적용시키기
+flush privileges;
+한 후에 mysql 재접속
+exit
+mysql -uroot -p
+
+
+
+[client]
+default-character-set = utf8
+port = 3306
+socket = /tmp/mysql.sock
+default-character-set = utf8
+ 
+
+
+[mysqld]
+socket=/tmp/mysql.sock
+datadir=/home/mysql_data
+basedir = /usr/local/mysql
+#user = mysql
+#bind-address = 0.0.0.0
+# 
+skip-external-locking
+key_buffer_size = 384M
+max_allowed_packet = 1M
+table_open_cache = 512
+sort_buffer_size = 2M
+read_buffer_size = 2M
+read_rnd_buffer_size = 8M
+myisam_sort_buffer_size = 64M
+thread_cache_size = 8
+query_cache_size = 32M
+ 
+#dns query
+skip-name-resolve
+ 
+#connection
+max_connections = 1000
+max_connect_errors = 1000
+wait_timeout= 60
+ 
+#slow-queries
+#slow_query_log = /home/mysql_data/slow-queries.log
+#long_query_time = 3
+#log-slow-queries = /home/mysql_data/mysql-slow-queries.log
+ 
+##timestamp
+explicit_defaults_for_timestamp
+ 
+symbolic-links=0
+ 
+### log
+log-error=/home/mysql_data/mysqld.log
+pid-file=/tmp/mysqld.pid
+ 
+###chracter
+character-set-client-handshake=FALSE
+init_connect = SET collation_connection = utf8_general_ci
+init_connect = SET NAMES utf8
+character-set-server = utf8
+collation-server = utf8_general_ci
+ 
+symbolic-links=0
+ 
+##Password Policy
+#validate_password_policy=LOW
+#validate_password_policy=MEDIUM
+ 
+ 
+### MyISAM Spectific options
+default-storage-engine = myisam
+key_buffer_size = 32M
+bulk_insert_buffer_size = 64M
+myisam_sort_buffer_size = 128M
+myisam_max_sort_file_size = 10G
+myisam_repair_threads = 1
+
+[mysqldump]
+default-character-set = utf8
+max_allowed_packet = 16M
+ 
+[mysql]
+no-auto-rehash
+default-character-set = utf8
+ 
+[myisamchk]
+key_buffer_size = 256M
+sort_buffer_size = 256M
+read_buffer = 2M
+write_buffer = 2M

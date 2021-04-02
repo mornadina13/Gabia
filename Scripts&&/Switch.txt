@@ -1,0 +1,294 @@
+
+----------------------------Switch--------------------------------
+
+Juniper : 2200-24T, 2200-48T, 2300-24T(최근), 2300-48T(최근)
+→ 끝에 T나 S가 붙는 의미는 T : UTP, F : 광 을 의미한다.
+24나 48는 port 수를 의미한다.
+
+Ex. 2200-24T : 24 Copper, 4P 1G 광
+2200-48T : 48 Copper, 4P 1G 광
+2300-24T : 24 Copper, 4P 1G 광
+
+ 
+Cisco : WS-C2960G, WS-C2960S-24TC-S
+		  WS-C2960-24TS-L
+		  WS-C2960S-24TS-C
+		  WS-C2960S-TS-S
+
+→ 전부 다 100M 24Port 이다.
+단, 24TS-L 모델만 1G이다.
+
+Cisco 장비가 Juniper 장비보다 약 2배 비쌈.
+
+
+광케이블 : SX, LX, EX 등등
+→ 거리에 따라서 달라지는 것.
+
+SX : Multi Cable 사용
+SX 아래부터는 Single Cable을 사용한다.
+→ X는 1G이고 R이 들어가면 10G이다. 
+
+
+----------------------------WG----------------------------------
+
+EX 4200-24T -> 1G 4Port 가능, 10G 2Port 가능, VC 가능
+EX 4200-48T -> 1G 4Port 가능, 10G 2Port 가능, VC 가능
+EX 4300-24T -> 1G 4Port 가능, 10G 4Port 가능, 후면에 40G Port 4개, VC 가능, MC-LAG
+EX 4300-48T -> 1G 4Port 가능, 10G 4Port 가능, 후면에 40G Port 4개, VC 가능, MC-LAG
+
+VC : 여러 장비를 한대의 장비처럼 쓸 수 있게 해줌
+MC-LAG : 이중화 기술
+채널 : 링크를 묶어서 여러개의 포트를 하나의 포트로 사용할 수 있게 해줌.
+
+
+C3750G - 24
+C3750G - 48
+
+Cisco : 2960G-24
+-> UTP와 광 둘 다 사용할 수 있게 되어있는데 하나를 사용하면 다른 하나는 사용 못함.
+
+Force 10 - S25 : CNS에 WG으로 4~5개 있음
+끝 4개와 여분 4개는 Combo 타입이다. 
+
+
+루핑?
+Broadcast Storm
+
+
+--------------------------------------------------------------------------
+
+"단독사용" -> IP를 할당받아서 본인 사용 외에 상업적으로 사용하지 못한다.
+
+BB와 WG 사이를 L2나 L3로 운영할 수 있는데, L3로 사용하게되면 이중화 사용을 따로 하지 않아도 된다.
+→ L2구조는 BB 2개가 WG와 연결하게 된다. → 이러한 경우 루프인이 발생할 수 있다. → STP를 이용해서 한쪽 라인은 죽여놔야 된다. 
+
+→ L3구조는 BB 2개가 WG와 독립적인 L2로 연결되므로 루프인이 발생할 수 없다. → 양방향 트래픽 전송이 가능하다.
+
+
+-----------------------------------Switch 실습-------------------------------------------
+
+root@:RE:0%
+→ Routing Engine 0번
+→ 장애 분석, 처리 등을 할때 사용함.
+
+
+cli
+{master:0} : master 장비 0번
+→ request 명령으로 정보 수집은 가능하지만, config 수정은 불가능하다
+
+configure
+→ config 값 설정하는 법
+
+show interfaces ge-0/0/0 
+→ config 정보
+
+cli
+configure
+show interfaces ge-0/0/0
+→ 적용되지는 않았지만 현재 설정된 config 값을 보여줌
+
+run show configuration interfaces ge-0/0/0
+→ 현재 실제 적용되어 동작중인 config 값을 보여줌
+
+
+- 장비의 설정이 보고 싶은 경우
+show interfaces : 전체 interfaces 보여줌
+show interfaces terse : 전체 interfaces를 간략히 보여줌
+
+Cisco → sub interfaces는 option임.
+Juniper → sub interfaces는 필수임.
+
+기본 설정이 되있으면 .0 으로 나옴.
+
+gre : kerneling interfaces
+vme : Virtual Interfaces
+
+show configuration | display set
+→ config 값을 넣은 그대로 보여주는 방식
+
+- Switch 장비의 스펙을 보고싶을떄
+show chassis hardware
+
+- 장비의 CPU 사용률을 보고싶을 때
+show chassis routing-engine
+
+
+- 운영하고있는 system의 상태 보는 방법
+show system processes
+
+show system processes extensive
+
+show system process extensive | except
+
+show system process extensive | except 0.00 
+→ 0.00 제외하고 전부 다 나옴
+
+show system  memory 
+→ 메모리 사용률 확인
+
+show system alarms
+→ 쳤을때 설정된 알람이 있으면 장비 앞의 ALM에 빨간 불이 들어와있다.
+
+show system uptime
+→ 시스템이 동작한 시간에 대한 log
+
+show version
+→ 장비 version 확인
+
+show system users
+→ 장비에 있는 user를 보여줌
+
+show interfaces ge-0/0/0 media
+→ 현재 설정된 값들을 디테일하게 출력해줌
+
+show interfaces ge-0/0/0 extensive
+→ 디테일하게
+
+show interfaces ge-0/0/0 terse
+→ 간략하게
+
+show log ?
+→ log file 확인
+→ interactive-commands : 어떤 user로 login해서 어떤 command를 쳤는지에 대한 모든 log 기록되어있음.
+
+show log messages.0.gz
+→ 0번 로그를 확인해서 보여주는 것
+
+show log messages.파일명.gz | match "찾고자 하는 문자열"
+Ex. show log messages.0.gz | match Interfaces
+
+show log messages.파일명.gz | except "제외하고자 하는 문자열"
+show log messages.0.gz | except Power
+
+show log interactive-commands
+→ 누가 어떤 명령어를 쳤는지
+
+show log interactive-commands | last 50
+→ 마지막 50개만 보여줌
+
+show log messages | last 50
+→ 마지막 50개 message만 출력
+
+
+
+-----------------------------------------------
+
+Auto-negotiation은 link의 속도를 자동으로 맞춰주는 기능인데, 가끔 방화벽의 경우 붙지 못하는 경우가 있다.
+
+CRC Error : 물리적인 문제가 발생한 경우
+→ 물리적으로 받거나 보내는 패킷에 문제가 있는경우 CRC Error가 발생하게 된다.
+→ 해결 방법 : 케이블 교체, 포트 교체
+
+Framing Error가 발생하게되면 99%는 CRC Error와 같이 발생하게된다.
+
+Mac pause frames : 더이상 packet을 queueing할 수 없을때 받는 것을 차단하는 경우.
+
+Juniper는 root passwrod가 지정되어 있어야 commit이 가능하다.
+
+
+
+-----------Switch 설정-------------
+1. configure
+
+2. root password 설정
+set system root-authentication plain-text-password
+패스워드 입력
+
+3. 확인
+run show configuration system | display set
+→ 현재 적용되어 동작중인 config
+
+show system | display set
+→ 설정은 했지만 적용되지는 않은 config
+
+4. 적용되어 동작중인 config와 적용하고자 하는 config의 차이 확인 
+show | compare 
+
+5. 새로 적용한 config가 문제가 없을지 확인
+commit check 
+→ 적용은 되지 않지만 적용했을때 확인할 수 있도록.
+
+6. 적용하고자 하는 config 값의 이름 매기기
+set system host-name 이름
+
+7. 확인
+show | compare
+
+8. 마지막 확인
+commit check
+
+9. 적용
+commit
+
+10. 적용된것 확인
+run show configuration system | display set
+
+11. 필요없는 것 죽이기 Ex. ALM 
+set chassis alarm management-ethernet link-down ignore
+commit check
+commit
+
+
+12. 필요없는 config 삭제하기
+Ex. set chassis auto-image-upgrade 를 삭제하는 경우
+
+delete chassis auto-image-upgrade
+
+- 잘못 삭제되는 경우 복구 방법 : rollback
+
+- n번째 commit 전으로 rollback하는 방법 : rollback 번호
+
+- 바로 직전에 했던 작업을 확인하는 방법
+
+commit을 했으면 rollback 번호 를 해주면 되고 commit을 안했으면 rollback 만 해주면 됨.
+
+
+13. show interfaces ge-0/0/0 | display set
+ethernet-switching -> L2 모드 (vlan에 붙어서 동작하는 switch) / inet-switching : L3 모드
+
+show vlans | display set
+
+set interfaces ge-0/0/0 ether-options speed 100m
+→ ethernet 속도를 100m로 바꾸고자 할 때.
+
+set interfaces ge-0/0/0 ether-options link-mode full-duplex
+
+set interfaces ge-0/0
+
+14. commit check
+commit
+run show interfaces ge-0/0/0
+
+
+
+> 가 있으면 show
+# 가 있으면 run
+
+15. port 연결 끊기
+deserver도 config 값을 수정하는 것이다.
+set interfaces ge-0/0/0 disable
+commit check
+commit
+
+deactivate interfaces ge-0/0/0 
+
+
+16. 기존 ethernet인 L2모드에서 L3로 변환하는 방법
+1) 기존 삭제
+delete interfaces ge-0/0/0 unit 0 family ethernet-switching
+
+2) L3로 전환
+set interfaces ge-0/0/0 unit 0 family inet address 192.168.2.1/30
+commit check
+commit
+
+
+run show route : routing table 확인
+
+set interfaces ge-0/0/1.0 family inet address 192.168.4.2/30
+
+run ping 192.168.4.1 rapid count 10000 size 1468
+
+기본적으로 ping 때리면 64byte가 나가는데 size를 키우면 latency가 늘어나고 패킷의 크기가 늘어나므로 
+확인하기가 쉽다.
+

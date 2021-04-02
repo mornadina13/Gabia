@@ -1,0 +1,492 @@
+##########사전 필요 패키지 설치
+
+apt-get update
+
+apt-get install gcc g++ libncurses5-dev libxml2-dev openssl libssl-dev curl libcurl4-openssl-dev libjpeg-dev libpng-dev libfreetype6-dev libsasl2-dev autoconf libncurses5-dev
+
+########### 디비설치
+
+groupadd mysql
+useradd -g mysql -s /bin/bash -m mysql
+
+apt-get install cmake
+
+http://ftp.hosteurope.de/mirror/archive.mariadb.org/mariadb-10.3.10/source/mariadb-10.3.10.tar.gz
+
+cmake \
+-DCMAKE_INSTALL_PREFIX=/usr/local/mysql \
+-DMYSQL_DATADIR=/usr/local/mysql/data \
+-DMYSQL_UNIX_ADDR=/usr/local/mysql/mysql.sock \
+-DMYSQL_TCP_PORT=3306 \
+-DMYSQL_USER=mysql \
+-DDEFAULT_CHARSET=utf8 \
+-DDEFAULT_COLLATION=utf8_general_ci \
+-DWITH_EXTRA_CHARSETS=all \
+-DENABLED_LOCAL_INFILE=1 \
+-DWITH_INNOBASE_STORAGE_ENGINE=1 \
+-DWITH_ARCHIVE_STORAGE_ENGINE=1 \
+-DWITH_BLACKHOLE_STORAGE_ENGINE=1 \
+-DDOWNLOAD_BOOST=0 -DWITH_BOOST=./boost
+
+##euckr
+-DDEFAULT_CHARSET=euckr \
+-DDEFAULT_COLLATION=euckr_korean_ci \
+
+
+--------------------------------------------
+
+make && make install
+
+cd /usr/local/mysql/scripts
+./mysql_install_db --user=mysql --basedir=/usr/local/mysql --datadir=/usr/local/mysql/data
+
+cd /usr/local/src/mysql-5.6.10/support-files/
+아니면 cd /usr/local/mysql/support-files
+
+vi mysql.server
+basedir=/usr/local/mysql    <--경로추가
+datadir=/usr/local/mysql/data    <--경로추가
+
+chmod 700 mysql.server
+cp -p ./mysql.server /usr/bin/
+cp -a ./mysql.server /etc/init.d/mysqld
+cp /usr/local/mysql/support-files/my-default.cnf /etc/my.cnf
+
+vi /etc/init.d/mysqld // 내용추가
+# chkconfig: - 50 50
+# description: init file for mysql server daemon
+
+chown -R root /usr/local/mysql
+chown -R mysql /usr/local/mysql/data
+chgrp -R mysql /usr/local/mysql
+
+
+
+=============== 샘플 my.cnf ====================
+
+[client]
+port		= 3306
+socket		= /usr/local/mysql/data/mysqld.sock
+
+[mysqld_safe]
+socket		= /usr/local/mysql/data/mysqld.sock
+nice		= 0
+
+[mysqld]
+user		= mysql
+pid-file		= /usr/local/mysql/data/mysqld.pid
+socket		= /usr/local/mysql/data/mysqld.sock
+port		= 3306
+basedir		= /usr/local/mysql
+datadir		= /usr/local/mysql/data
+tmpdir		= /tmp
+skip-external-locking
+
+key_buffer		= 16M
+max_allowed_packet	= 16M
+thread_stack		= 192K
+thread_cache_size       = 8
+myisam-recover         = BACKUP
+query_cache_limit	= 1M
+query_cache_size        = 16M
+log_error = /usr/local/mysql/data/mysqld.log
+expire_logs_days	= 10
+max_binlog_size         = 100M
+
+[mysqldump]
+quick
+quote-names
+max_allowed_packet	= 16M
+
+[isamchk]
+key_buffer		= 16M
+
+=============================================
+
+vi /etc/my.cnf
+
+해당 파일에서 data 경로 socket 경로 주의해서 설정
+
+http://blog.naver.com/PostView.nhn?blogId=islove8587&logNo=221970366883 참고
+
+##루트 이동
+cd ~
+vi .profile
+
+PATH에 경로 추가 :/usr/local/mysql/bin
+PATH=$PATH:$HOME/bin:/usr/local/mysql/bin
+
+
+update-rc.d mysqld defaults
+
+실행 잘 안될시 libiconv 확인해보셈... 왜 그런지는 모르겠음
+
+#############apache 설치
+##사전설치
+apr-1.5.2.tar.gz    
+apr-util-1.5.4.tar.gz
+
+#apr-1.5.2 먼저설치 (옵션없음)
+./configure
+make && make install
+
+#apr-util-1.5.4
+./configure --with-apr=/usr/local/apr
+make && make install
+
+wget http://archive.apache.org/dist/httpd/httpd-2.4.41.tar.gz
+tar xvfz httpd-2.4.41.tar.gz
+
+apt-get install pcre-dev
+sudo apt-get install libpcre3-dev
+
+
+#아파치 설치
+./configure \
+--prefix=/usr/local/apache \
+--enable-mods-shared=most \
+--enable-so \
+--enable-rewrite \
+--enable-modules=all \
+--enable-ssl \
+--with-mpm=prefork
+
+
+make && make install
+
+
+vi /usr/local/apache/conf/httpd.conf
+
+##내용추가
+AddType application/x-httpd-php .php .htm .html
+AddType application/x-httpd-php-source .phps
+ServerName 127.0.0.1
+
+#항목추가
+DirectoryIndex index.html index.php            <-- php추가
+
+
+cp -f /usr/local/apache/bin/apachectl /etc/rc.d/init.d/httpd
+
+#내용추가
+vi /etc/rc.d/init.d/httpd 
+# chkconfig: - 50 50
+# description: init file for apache server daemon
+
+update-rc.d httpd defaults
+
+
+########## php 설치
+
+
+apt install build-essential
+sudo apt-get install libcurl4-openssl-dev
+apt-get install postgresql-12
+apt install php-gd
+apt-get install gdbm-devel
+apt-get install libgdbm-dev
+sudo apt install php-gd 
+apt-get install pkgconf
+apt-get install libzip-dev
+apt-get install  libssl-dev
+apt-get install install libjpeg-dev
+apt-get install libjpeg-dev
+apt-get install install libpng-dev
+apt-get install install curl-dev
+apt-get install curl-dev
+apt-get install libtool-ltdl-dev
+
+
+## 사전설치
+libmcrypt-2.5.8.tar.gz
+./configure (옵션없음)
+make && make install
+
+libiconv-1.13.1
+./configure --prefix=/usr/local   // 경로 중요
+make &&  make install
+
+#freetype 소스설치
+
+wget https://pilotfiber.dl.sourceforge.net/project/freetype/freetype2/2.4.10/freetype-2.4.10.tar.gz
+tar xvfz freetype-2.4.10.tar.gz
+cd freetype-2.4.10/
+./configure --prefix=/usr
+make -j4
+make install -j4
+
+
+
+./configure \
+--enable-sigchild \
+--prefix=/usr/local/php \
+--with-apxs2=/usr/local/apache/bin/apxs \
+--with-config-file-path=/usr/local/php/ \
+--with-config-file-scan-dir=/usr/local/php/etc/conf.d \
+--with-openssl \
+--with-kerberos \
+--with-zlib \
+--enable-bcmath \
+--with-bz2 \
+--enable-calendar \
+--with-curl \
+--enable-dba \
+--with-gdbm \
+--with-libxml-dir=/usr \
+--enable-exif \
+--enable-ftp \
+--with-gd \
+--with-jpeg-dir=/usr \
+--with-png-dir=/usr \
+--with-freetype-dir=/usr \
+--enable-gd-native-ttf \
+--enable-intl \
+--with-gettext \
+--with-mhash \
+--with-imap-ssl \
+--enable-mbstring \
+--with-mcrypt \
+--enable-soap \
+--enable-sockets \
+--enable-sysvmsg \
+--enable-sysvsem \
+--enable-sysvshm \
+--enable-wddx \
+--with-mysqli=/usr/local/mysql/bin/mysql_config \
+--with-pdo-mysql=/usr/local/mysql \
+--enable-zip
+
+
+
+
+## 하기 변수에 -liconv 마지막에 추가vi m
+vi Makefile
+EXTRA_LIBS = -liconv 
+
+make
+make install
+
+cp /usr/local/src/php-7.0.8/php.ini-development /usr/local/php/etc/php.ini
+
+
+
+
+(--with-config-file-path=/usr/local/apache/conf \)
+
+
+################## 끝!!!!!!!!!
+
+php 5.2 http 2.4 일경우 설치
+
+yum -y install libtool-ltdl-devel
+
+
+###############
+
+ln -s /usr/lib64/libjpeg.so /usr/lib/
+ln -s /usr/lib64/libpng.so /usr/lib/
+
+
+
+---------------------------------------------------------------
+
+########iconv 관련 에러########## 
+
+ext/iconv/.libs/iconv.o(.text+0x37e8):/usr/local/php-5.1.6/ext/iconv/iconv.c:2379: undefined reference to `libiconv' 
+ext/iconv/.libs/iconv.o(.text+0x3b81): In function `php_iconv_stream_filter_factory_create': 
+/usr/local/php-5.1.6/ext/iconv/iconv.c:2333: undefined reference to `libiconv_open' 
+collect2: ld returned 1 exit status 
+make: *** [sapi/cli/php] Error 1 
+
+이럴 경우 ./configure 를 수행한 후 Makefile을 열어서 다음 항목을 추가해 줍니다.
+
+vi Makefile
+
+EXTRA_LIBS = -liconv
+
+EXTRA_LIBS 항목 맨 끝부분에 -liconv 를 추가하여 저장한 후 make를 수행하면 됩니다.
+
+################################
+
+
+5.1.X 버전 설치시 make에러 
+
+php 5.0.5 configure 시 curl 부분 다음과 같이 에러 날 시
+
+/src/ILAYA/SOURCE/php-5.0.5/ext/curl/interface.c -o ext/curl/interface.lo 
+/usr/local/src/ILAYA/SOURCE/php-5.0.5/ext/curl/interface.c: In function 'zm_startup_curl':
+/usr/local/src/ILAYA/SOURCE/php-5.0.5/ext/curl/interface.c:173: error: 'CURLOPT_FTPASCII' undeclared (first use in this function)
+/usr/local/src/ILAYA/SOURCE/php-5.0.5/ext/curl/interface.c:173: error: (Each undeclared identifier is reported only once
+/usr/local/src/ILAYA/SOURCE/php-5.0.5/ext/curl/interface.c:173: error: for each function it appears in.)
+/usr/local/src/ILAYA/SOURCE/php-5.0.5/ext/curl/interface.c:211: error: 'CURLOPT_PASSWDFUNCTION' undeclared (first use in this function)
+make: *** [ext/curl/interface.lo] Error 1
+
+211 라인 CURLOPT_PASSWDFUNCTION 부분은 사용하지 않는다고 하니 주석 또는 제거 하고 173 CURLOPT_FTPASCII 라인의 이름은 CURLOPT_TRANSFERTEXT 로 변경하여 줄 것
+CURLOPT_PASSWDFUNCTION has no function and hasn't had any for quite some
+time. You can just erase every use of that.
+
+CURLOPT_FTPASCII should simply be renamed to CURLOPT_TRANSFERTEXT
+
+
+vi /usr/local/src/ILAYA/SOURCE/php-5.0.5/ext/curl/interface.c 로 파일열고
+
+CURLOPT_FTPASCII 부분을 -> CURLOPT_TRANSFERTEXT 로 변경
+
+CURLOPT_PASSWDFUNCTION 줄은 제거
+
+===============================================================
+
+증상 : 아파치 2.3.6과 PHP 5.2.10 설치 시 libphp5.so 에러 발생
+
+libphp5.so undefined symbol unixd_config
+
+해결법 : 아파치 버젼업으로 인하여 해단 심볼의 명칭이 변경 되었음.
+/usr/local/src/php-5.2.10/sapi/apache2handler/php_functions.c 파일에서 
+
+unixd_config => ap_unixd_config 로 변경.
+
+※ unixd_config_rec라는 부분은 변경하면 안됨!!! 주의 할것!!
+
+
+>line 386  <---여기랑
+#if !defined(WIN32) && !defined(WINNT) && !defined(NETWARE)
+        AP_DECLARE_DATA extern unixd_config_rec ap_unixd_config;
+#endif
+
+>line 417  <---여기
+#if !defined(WIN32) && !defined(WINNT) && !defined(NETWARE)
+        snprintf(tmp, sizeof(tmp), "%s(%d)/%d", ap_unixd_config.user_name, ap_unixd_config.user_id, ap_unixd_config.group_id);
+        php_info_print_table_row(2, "User/Group", tmp);
+#endif
+
+===============================================================
+
+php 소스 설치 하다가 보면
+
+./configure 는 잘 되는데!!
+
+make 할 때 
+
+undefined reference to `libiconv_open’
+undefined reference to `libiconv’
+undefined reference to `libiconv_close’
+
+
+libiconv 를 설치하자
+
+# wget http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.13.1.tar.gz
+# tar -zxvf libiconv-1.13.1.tar.gz
+# cd libiconv-1.13.1
+# ./configure --prefix=/usr/local   // 경로 중요
+# make
+# make install
+
+-with-iconv=/usr/local  // 어디서는 /usr/bin 으로 해야한다고 하는데 개뿔 -ㅅ- 위의 경로 그대로 하면 됨
+
+===============================================================
+
+
+리눅스 APM 소스설치시 Error 및 해결 방법
+APM 소스설치시 발생되는 몇가지 Error와 그 해결 방법이다.
+1. Mysql
+Error 1)
+checking for termcap functions library... configure: error: No curses/termcap library found
+make: *** No targets specified and no makefile found.  Stop.
+해결 방법
+# yum ?y install libtermcap-devel ncurses-devel 설치
+Error 2)
+/bin/rm: cannot remove `libtoolT': No such file or directory 
+해결 방법
+mysql 소스파일 Directory에서 아래 진행
+# autoreconf --force --install
+# aclocal
+# libtoolize --automake --force
+# automake --force --add-missing
+2. Apache
+Error 1)
+configure: error: ...No recognized SSL/TLS toolkit detected
+해결 방법
+# yum ?y install openssl-devel
+3. PHP
+Error 1)
+Checking for pkg-config... /usr/bin/pkg-config
+configure: error: Cannot find OpenSSL's <evp.h>
+해결 방법
+# yum ?y install openssl-devel
+Error 2)
+Configure: error: xml2-config not found. Please check your libxml2 installation.
+해결 방법
+# yum -y install libxml2-devel
+Error 3)
+Configure: error: Please reinstall the libcurl distribution -
+easy.h should be in <curl-dir>/include/curl/
+해결 방법
+# yum -y install curl-devel
+Error 4)
+Configure: error: libpng.(also) not found.
+해결 방법
+# yum ?y install libpng-devel
+Error 5)
+Configure: error: Please reinstall the BZip2 distribution
+해결 방법
+# yum ?y install bzip2-devel
+Error 6)
+Configure: error: libjpeg.(also) not found.
+해결 방법
+yum -y install libjpeg-devel
+yum -y install libpng-devel
+
+ln-s /usr/lib64/libjpeg.so /usr/lib
+ln-s /usr/lib64/libpng.so /usr/lib
+
+Error 7)
+Checking for unixODBC support... configure: error: ODBC header file '/usr/include/sqlext.h' not found!
+해결 방법
+# yum ?y install unixODBC-devel
+Error 8)
+configure: error: DBA: Could not find necessary header file(s).
+해결 방법
+# yum ?y install gdbm-devel
+Error 9)
+Configure: error: Cannot find MySQL header files under /usr.
+Note that the MySQL client library is not bundled anymore!
+해결 방법
+# yum ?y install mysql-devel
+Error 10)
+Configure: error: freetype.h not found.
+해결 방법
+# yum -y install freetype-devel
+Error 11)
+Configure: error: Unable to locate gmp.h
+해결 방법
+# yum ?y install gmp-devel
+Error 12)
+Configure: error: Cannot find pspell
+해결 방법
+# yum ?y install pspell-devel
+Error 13)
+configure: error: not found. Please reinstall the expat distribution.
+해결 방법
+# yum ?y install expat-devel
+Error 14)
+Configure: error: Please reinstall the ncurses distribution
+해결 방법
+# yum ?y install ncurses-devel
+Error 15)
+Configure: error: snmp.h not found. Check your SNMP installation.
+해결 방법
+# yum ?y install net-snmp-devel
+
+=====================================================
+
+make: *** [ext/dom/node.lo] Error 1
+
+cd /usr/src/php-5.3.10
+wget http://cpanelstuffs.linuxcabin.com/downloads/php1.patch
+chmod 755 php1.patch
+patch -p0 < php1.patch
+
+
+============================ 컴파일에러
+
+openssl 에러나면  --with-openssl=shared\  옵션에 shared 추가
