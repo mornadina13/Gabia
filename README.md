@@ -12,12 +12,14 @@ January 18, 2021 - March 31, 2021
 > (1) Running Legacy System(Cisco, Juniper, HP, DELL, etc).
 <br>- Managing OS&APM Version
 <br>
-<br>(2) Client Support .
+>> <br>(2) Client Support .
 <br>- VOC Feedback
-<br>(3) Technical Support.
+<br>
+> <br>(3) Technical Support.
 <br>- Monitoring(Seocho IDC, Gasan IDC)
 <br>- Failover&Trouble shooting
-<br>(4) Resilience Project
+<br>
+> <br>(4) Resilience Project
 <br>Project Organized by Executive Director Ryan
 <br>- Resilience Definition
 <br>- Dynamic Resilience Definition
