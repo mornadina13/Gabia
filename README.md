@@ -1,5 +1,4 @@
 # Gabia_Winter Internship_2021
-<br>
 ### 1. Company : Gabia co.,Ltd.
 <br>Security IDC Operating Division, Managed Service Unit
 <br>
