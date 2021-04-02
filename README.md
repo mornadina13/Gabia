@@ -18,6 +18,7 @@ January 18, 2021 - March 31, 2021
 - Failover&Trouble shooting
 #### (4) Resilience Project.
 Organized by Executive Director Ryan
+https://github.com/mornadina13/Gabia/blob/main/Resilience%20Project/Resilience_book.pdf
 - Resilience Definition
 - Dynamic Resilience Definition
 - Resilience for IDC
