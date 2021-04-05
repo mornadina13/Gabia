@@ -25,6 +25,6 @@ https://github.com/mornadina13/Gabia/blob/main/Resilience%20Project/Resilience_b
 <br>
 
 ### 5. Proof.
-<p align="left"><img src="https://github.com/mornadina13/Gabia/blob/main/Certificates/Eng.jpeg" witdh="800" height="500" /><img src="https://github.com/mornadina13/Gabia/blob/main/Certificates/Kor.jpeg" witdh="800" height="500" /></p>
+<p align="left"><img src="https://github.com/mornadina13/Gabia/blob/main/Certificates/Eng.jpeg" witdh="400" height="200" /><img src="https://github.com/mornadina13/Gabia/blob/main/Certificates/Kor.jpeg" witdh="400" height="200" /></p>
 <br>
 <img src="https://github.com/mornadina13/Gabia/blob/main/Certificates/Gabia.png" width="500" height="800" />
