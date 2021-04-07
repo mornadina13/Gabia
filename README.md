@@ -17,7 +17,7 @@ January 18, 2021 - March 31, 2021
 - Monitoring(Seocho IDC, Gasan IDC)
 - Failover&Trouble shooting
 #### (4) Resilience Project.
-Organized by Executive Director Ryan
+Organized by Executive Director Ryan of Security IDC Operating Team.
 - Resilience Definition
 - Dynamic Resilience Definition
 - Resilience for IDC<br>
