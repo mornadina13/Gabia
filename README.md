@@ -5,7 +5,7 @@ Security IDC Operating Division, Managed Service Unit
 ### 2. Title.
 Manager(System Engineer)
 <br>
-### 3. Date.
+### 3. Period.
 January 18, 2021 - March 31, 2021
 <br>
 ### 4. Specific.
