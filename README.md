@@ -21,7 +21,7 @@ Organized by Executive Director Ryan of Security IDC Operating Division.
 - Resilience Definition
 - Dynamic Resilience Definition
 - Resilience for IDC<br>
-https://github.com/mornadina13/Gabia/blob/main/Resilience%20Project/Resilience_book.pdf
+- Result : https://github.com/mornadina13/Gabia/blob/main/Resilience%20Project/Resilience_book.pdf
 <br>
 
 ### 5. Proof.
